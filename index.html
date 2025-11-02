@@ -87,13 +87,28 @@
         <div id="ai-output">Lance un test 👆</div>
       </div>
     </main>
-    <script>
-   fetch("https://astrofood-ai-2025-chi.vercel.app/api/astrofood-ai", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ sign: "Lion", lang: "fr" })
-}).then(r => r.json()).then(console.log);
 
+    <!-- ✅ SCRIPT ACTIF -->
+    <script>
+      const API_URL = "/api/astrofood-ai";
+      const out = document.getElementById("ai-output");
+
+      document.getElementById("btn-recipe").addEventListener("click", async () => {
+        const sign = document.getElementById("sign").value;
+        const lang = document.getElementById("lang").value;
+        out.textContent = "🍳 Génération...";
+        try {
+          const res = await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sign, lang })
+          });
+          const data = await res.json();
+          out.textContent = data.text || "❌ pas de texte reçu";
+        } catch (e) {
+          out.textContent = "❌ Erreur API : " + e.message;
+        }
+      });
     </script>
   </body>
 </html>
