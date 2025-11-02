@@ -4,36 +4,42 @@ export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  // Préflight
-  if (req.method === "OPTIONS") {
-    return res.status(204).end();
+  if (req.method === "OPTIONS") return res.status(204).end();
+
+  // 🕵️ on essaie de trouver une clé OpenAI même si le nom n'est pas parfait
+  const envKeys = Object.keys(process.env || {});
+  const openaiLike = envKeys.filter(k => k.toLowerCase().includes("openai"));
+  // priorité au nom "officiel"
+  let apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey && openaiLike.length > 0) {
+    // on prend la première trouvée
+    apiKey = process.env[openaiLike[0]];
   }
 
-  // 🔎 MODE DEBUG VIA GET
-  // https://ton-site.vercel.app/api/astrofood-ai?debug=1
+  // 🔎 mode debug
   if (req.method === "GET") {
     const isDebug =
       (req.query && req.query.debug === "1") ||
       (req.url && req.url.includes("debug=1"));
 
     if (isDebug) {
-      const apiKey = process.env.OPENAI_API_KEY;
       return res.status(200).json({
         ok: true,
         message: "Debug AstroFood API",
         hasKey: !!apiKey,
         keyPreview: apiKey ? apiKey.slice(0, 6) + "..." : null,
         env: process.env.VERCEL_ENV || "unknown",
-        note:
-          "Si hasKey = false, c'est que la variable n'est pas définie dans CE projet Vercel (Settings → Environment Variables → OPENAI_API_KEY)."
+        foundEnvNames: openaiLike, // 👈 on te montre ce que Vercel voit vraiment
+        note: openaiLike.length === 0
+          ? "Aucune variable contenant 'openai' trouvée sur CE projet. Ajoute-en une."
+          : "On a trouvé au moins une variable contenant 'openai'. Le code va l'utiliser."
       });
     }
 
-    // GET normal → on dit d'utiliser POST
     return res.status(405).json({ error: "Use POST" });
   }
 
-  // À partir d'ici : POST normal
+  // à partir d'ici : POST normal
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Use POST" });
   }
@@ -42,21 +48,19 @@ export default async function handler(req, res) {
   const sign = body.sign || "Poissons";
   const lang = body.lang || "fr";
 
-  const apiKey = process.env.OPENAI_API_KEY;
-
-  // 🟣 PAS DE CLÉ → on répond quand même avec un texte (ce que tu vois actuellement)
+  // pas de clé DU TOUT
   if (!apiKey) {
     return res.status(200).json({
       ok: false,
-      text: `⚠️ IA non activée sur le serveur (clé absente).
-Tu as demandé une recette pour : ${sign} (${lang}).
-➡️ Va dans Vercel → ton projet **astrofood-ai-2025-chi** → Settings → Environment Variables → ajoute OPENAI_API_KEY → mets ta clé → Save → Redeploy.`
+      text: `⚠️ IA non activée sur le serveur (aucune variable d'environnement contenant "openai" trouvée).
+Tu as demandé : ${sign} (${lang}).
+➡️ Dans Vercel → Settings → Environment Variables, ajoute par ex. "OPENAI_API_KEY" avec ta clé, puis redeploy.`
     });
   }
 
-  // 🟢 CLÉ PRÉSENTE → on appelle OpenAI
+  // 🔮 appel OpenAI
   try {
-    const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
+    const aiRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
@@ -68,24 +72,24 @@ Tu as demandé une recette pour : ${sign} (${lang}).
           {
             role: "system",
             content:
-              "Tu es Chef-AI d'AstroFood. Tu donnes des recettes gastronomiques, courtes, adaptées au signe, avec parfois des ingrédients africains."
+              "Tu es Chef-AI d'AstroFood. Tu donnes des recettes astro courtes avec des touches sénégalaises/africaines."
           },
           {
             role: "user",
-            content: `Donne une recette astro pour le signe ${sign} en ${lang}.`
+            content: `Donne une recette pour le signe ${sign} en ${lang}.`
           }
         ],
         max_tokens: 280
       })
     });
 
-    const data = await openaiRes.json();
+    const data = await aiRes.json();
     const content = data?.choices?.[0]?.message?.content;
 
     if (!content) {
       return res.status(200).json({
         ok: false,
-        text: "⚠️ OpenAI a répondu sans contenu. Vérifie ton compte / ton modèle.",
+        text: "⚠️ OpenAI a répondu sans contenu. Vérifie ton compte ou ta clé.",
         raw: data
       });
     }
