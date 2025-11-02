@@ -88,35 +88,12 @@
       </div>
     </main>
     <script>
-      // on mettra le vrai domaine Vercel ici après import
-      const API_URL = "/api/astrofood-ai";
+   fetch("https://astrofood-ai-2025-chi.vercel.app/api/astrofood-ai", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ sign: "Lion", lang: "fr" })
+}).then(r => r.json()).then(console.log);
 
-      const out = document.getElementById("ai-output");
-
-      document.getElementById("btn-chat").addEventListener("click", async () => {
-        const message = document.getElementById("chat-input").value.trim();
-        out.textContent = "⏳ Chef-AI réfléchit...";
-        const res = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ mode: "chat", message })
-        });
-        const data = await res.json();
-        out.textContent = data.text || JSON.stringify(data, null, 2);
-      });
-
-      document.getElementById("btn-recipe").addEventListener("click", async () => {
-        const sign = document.getElementById("sign").value;
-        const lang = document.getElementById("lang").value;
-        out.textContent = "🍳 Génération de la recette...";
-        const res = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ mode: "recipe", sign, lang })
-        });
-        const data = await res.json();
-        out.textContent = data.text || JSON.stringify(data, null, 2);
-      });
     </script>
   </body>
 </html>
