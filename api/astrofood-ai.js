@@ -1,45 +1,21 @@
-export const runtime = "edge";
+<script>
+  const API_URL = "/api/astrofood-ai";
+  const out = document.getElementById("ai-output");
 
-export default async function handler(req) {
-  // CORS
-  if (req.method === "OPTIONS") {
-    return new Response(null, {
-      status: 204,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type"
-      }
-    });
-  }
-
-  // On accepte POST uniquement
-  if (req.method !== "POST") {
-    return new Response(JSON.stringify({ error: "Use POST" }), {
-      status: 405,
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
-      }
-    });
-  }
-
-  // 👉 ICI on répond tout de suite, sans appeler OpenAI
-  const body = await req.json().catch(() => ({}));
-  const sign = body.sign || "Poissons";
-  const lang = body.lang || "fr";
-
-  const text = `✅ API ASTROFOOD OK
-Signe: ${sign}
-Langue: ${lang}
-Recette démo: jus de bouye énergisant + tartine mil & miel.`;
-
-  return new Response(JSON.stringify({ ok: true, text }), {
-    status: 200,
-    headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*"
+  document.getElementById("btn-recipe").addEventListener("click", async () => {
+    const sign = document.getElementById("sign").value;
+    const lang = document.getElementById("lang").value;
+    out.textContent = "🍳 Génération...";
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sign, lang })
+      });
+      const data = await res.json();
+      out.textContent = data.text || JSON.stringify(data, null, 2);
+    } catch (e) {
+      out.textContent = "❌ Impossible d'appeler l'API : " + e.message;
     }
   });
-}
-
+</script>
