@@ -89,39 +89,30 @@
     </main>
 
     <!-- ✅ SCRIPT ACTIF -->
-  <script>
+<script>
   const API_URL = "/api/astrofood-ai";
   const out = document.getElementById("ai-output");
+  const btn = document.getElementById("btn-recipe");
+  const signSel = document.getElementById("sign");
+  const langSel = document.getElementById("lang");
 
-  document.getElementById("btn-recipe").addEventListener("click", async () => {
-    const sign = document.getElementById("sign").value;
-    const lang = document.getElementById("lang").value;
-    out.textContent = "🍳 Génération...";
+  btn.addEventListener("click", async () => {
+    const sign = signSel.value;
+    const lang = langSel.value;
+    out.textContent = "🍳 Génération de la recette...";
     try {
       const res = await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sign, lang })
       });
-
       const data = await res.json();
-
-      if (data.text) {
-        out.textContent = data.text;
-      } else if (data.error) {
-        out.textContent = "❌ Erreur : " + data.error;
-      } else {
-        out.textContent = "❌ Réponse inconnue du serveur :\n" + JSON.stringify(data, null, 2);
-      }
+      out.textContent = data.text || "⚠️ Pas de texte reçu.";
     } catch (e) {
-      out.textContent = "❌ Erreur API (front) : " + e.message;
+      out.textContent = "❌ Erreur côté navigateur : " + e.message;
     }
   });
-
-  // bouton chat = juste un message pour l’instant
-  document.getElementById("btn-chat").addEventListener("click", () => {
-    out.textContent = "💬 Le mode chat IA n'est pas encore activé (on protège les tokens).";
-  });
 </script>
+
   </body>
 </html>
