@@ -194,6 +194,22 @@
 
     <!-- ========= SCRIPT MINIMAL : APPELLE /api/chef-image ET REMPLACE <img.photo> ========= -->
   <script>
+    
+  // --- Lecture automatique des paramètres de l'URL ---
+  const params = new URLSearchParams(window.location.search);
+  const sign = params.get('sign');
+  const recipe = params.get('recipe');
+
+  // Exemple d’insertion dynamique dans la carte :
+  if (recipe) {
+    const titleEl = document.querySelector('.title');
+    if (titleEl) titleEl.textContent = recipe;
+  }
+
+  if (sign) {
+    const tagEl = document.querySelector('.tag');
+    if (tagEl) tagEl.textContent = `🌙 Signe conseillé : ${sign}`;
+  } 
     function _afPayload(){
       const title = document.querySelector('.title')?.innerText?.trim() || 'Recette';
       // Accepte <li> dans #steps ou bien le 2e div d’un .step (compat)
