@@ -271,7 +271,7 @@
 const tagSign = document.getElementById('tag-sign');
 if (tagSign) tagSign.textContent = `🌙 Signe conseillé : ${recipe.sign || '—'}`;
 
-const goalMap = { detox:"Détox", energy_boost:"Booster énergie", stress_relief:"Anti-stress", immunity:"Immunité", digestion:"Digestion" };
+const goalMap = { detox:"Détox", energy_boost:"Booster énergie", stress_relief:"Anti-stress", immunity:"Immunité", digestion:"Digestion",Metabolic_balance:"balance_metabolique" };
 const tagGoal = document.getElementById('tag-goal');
 if (tagGoal) tagGoal.textContent = `🎯 Objectif : ${goalMap[recipe.goal] || recipe.goal || '—'}`;
 
