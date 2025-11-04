@@ -98,7 +98,10 @@
       <button class="btn" id="btn-recipe" style="margin-top:.7rem">🍳 <span data-i18n-fr="Générer" data-i18n-en="Generate" data-i18n-ar="إنشاء">Générer</span></button>
       <div id="ai-output" class="ai-out">Prêt.</div>
       <div style="margin-top:.6rem">
-         <a id="open-digital-card" class="btn">📇 Afficher la carte digitale</a>
+         <a class="btn" id="open-digital-card" href="/carte.html" target="_blank" rel="noopener">
+  📇 Afficher la carte digitale
+</a>
+
       </div>
     </section>
 
@@ -176,11 +179,7 @@
         out.textContent = data.text || "⚠️ Pas de texte reçu.";
       }catch(e){
         out.textContent = "❌ Erreur front : "+e.message;
-      }
-      document.getElementById('open-digital-card')?.addEventListener('click', function(e){
-    e.preventDefault();
-    // Ouvre la carte séparément
-    window.open('/carte.html', '_blank');
+      }  
     });
   </script>
 </body>
