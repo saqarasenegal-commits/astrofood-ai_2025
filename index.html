@@ -178,6 +178,15 @@
     // =========================
     const API_URL = "/api/astrofood-ai";
     const out = document.getElementById("ai-output");
+    function elementFromSign(frSign){
+  const s = (frSign || "").toLowerCase();
+  if (["bélier","belier","lion","sagittaire"].some(x=>s.includes(x))) return "Feu";
+  if (["taureau","vierge","capricorne"].some(x=>s.includes(x))) return "Terre";
+  if (["gémeaux","gemeaux","balance","verseau"].some(x=>s.includes(x))) return "Air";
+  if (["cancer","scorpion","poissons"].some(x=>s.includes(x))) return "Eau";
+  return "—";
+}
+
 
     document.getElementById("btn-recipe").addEventListener("click", async ()=>{
       const sign = document.getElementById("sign").value;
