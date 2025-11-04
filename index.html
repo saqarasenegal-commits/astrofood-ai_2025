@@ -164,24 +164,109 @@
     });
 
     // API hook
-    const API_URL = "/api/astrofood-ai";
-    const out = document.getElementById("ai-output");
-    document.getElementById("btn-recipe").addEventListener("click", async ()=>{
-      const sign = document.getElementById("sign").value;
-      const lang = document.getElementById("lang").value;
-      out.textContent = "🍳 Génération…";
-      try{
-        const r = await fetch(API_URL, {
-          method:"POST",
-          headers:{ "Content-Type":"application/json" },
-          body: JSON.stringify({ sign, lang, mode:"recipe" })
-        });
-        const data = await r.json();
-        out.textContent = data.text || "⚠️ Pas de texte reçu.";
-      }catch(e){
-        out.textContent = "❌ Erreur front : "+e.message;
-      }
-  });
+   <script>
+  // ⚙️ À adapter : ton endpoint actuel
+  const API_URL = window.API_URL || "/api/astrofood";
+
+  // État unique
+  const appState = { recipe: null };
+
+  // Sélecteurs (à confirmer avec tes IDs/classes)
+  const $btnGenerate = document.getElementById("btn-recipe");
+  const $btnOpenCard = document.getElementById("open-digital-card");
+  const $out = document.getElementById("out");
+
+  // -- CORE: stocker + notifier
+  function setRecipe(data) {
+    appState.recipe = data;
+    try {
+      localStorage.setItem("astro:lastRecipe", JSON.stringify(data));
+    } catch(e) { console.warn("localStorage indisponible", e); }
+
+    // Notifier tous les listeners de la page
+    window.dispatchEvent(new CustomEvent("astro:recipe-updated", { detail: data }));
+    // Si la carte est sur la même page, on peut rendre tout de suite
+    renderCardIfOpen();
+  }
+
+  // -- Génération IA
+  async function generateRecipe() {
+    const sign = document.getElementById("sign")?.value || "taurus";
+    const lang = document.getElementById("lang")?.value || "fr";
+
+    if ($out) $out.textContent = "🍳 Génération…";
+    const r = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sign, lang, mode: "recipe" })
+    });
+    const payload = await r.json();
+
+    // Normaliser un minimum les champs attendus par la carte
+    const normalized = {
+      sign, lang,
+      title: payload.title || payload.recipe?.title || "Recette",
+      description: payload.description || payload.recipe?.description || "",
+      ingredients: payload.ingredients || payload.recipe?.ingredients || [],
+      steps: payload.steps || payload.recipe?.steps || [],
+      image: payload.image || payload.recipe?.image || ""
+    };
+
+    if ($out) $out.textContent = "✅ Recette générée";
+    setRecipe(normalized);
+  }
+
+  // -- Ouvrir la carte
+  function openCard() {
+    // Variante A (même page) : afficher la section/modale
+    const $card = document.getElementById("digital-card");
+    if ($card) {
+      $card.classList.add("open");
+      // Hydrater depuis le cache si on a déjà une recette
+      const cached = localStorage.getItem("astro:lastRecipe");
+      if (cached) renderCard(JSON.parse(cached));
+      return;
+    }
+
+    // Variante B (autre page/onglet)
+    // window.open("digital-card.html", "astrocard"); // <- décommente si tu as une page dédiée
+  }
+
+  // -- Rendu de la carte (même page)
+  function renderCard(data = appState.recipe) {
+    if (!data) return;
+    const $card = document.getElementById("digital-card");
+    if (!$card) return;
+
+    $card.querySelector(".dc-title") && ($card.querySelector(".dc-title").textContent = data.title);
+    $card.querySelector(".dc-desc") && ($card.querySelector(".dc-desc").textContent = data.description);
+
+    const $ing = $card.querySelector(".dc-ingredients");
+    if ($ing) $ing.innerHTML = (data.ingredients || []).map(i => `<li>${i}</li>`).join("");
+
+    const $steps = $card.querySelector(".dc-steps");
+    if ($steps) $steps.innerHTML = (data.steps || []).map(s => `<li>${s}</li>`).join("");
+
+    $card.querySelector(".dc-sign") && ($card.querySelector(".dc-sign").textContent = (data.sign || "").toUpperCase());
+    $card.querySelector(".dc-lang") && ($card.querySelector(".dc-lang").textContent = (data.lang || "").toUpperCase());
+
+    const $img = $card.querySelector(".dc-img");
+    if ($img && data.image) $img.src = data.image;
+  }
+
+  function renderCardIfOpen() {
+    const $card = document.getElementById("digital-card");
+    if ($card && $card.classList.contains("open")) renderCard();
+  }
+
+  // -- Listeners
+  $btnGenerate?.addEventListener("click", generateRecipe);
+  $btnOpenCard?.addEventListener("click", (e) => { e.preventDefault(); openCard(); });
+
+  // La carte (même page) écoute l’évènement global
+  window.addEventListener("astro:recipe-updated", (e) => renderCard(e.detail));
+    }
+  
 </script>
 </body>
 </html>
