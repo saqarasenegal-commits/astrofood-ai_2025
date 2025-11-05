@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AstroFood Premium Gold — Index (Dark Astral v16.5)</title>
+  <title>AstroFood Premium Gold — Index (Dark Astral v16.8)</title>
   <meta name="theme-color" content="#0f172a" />
   <style>
     :root{
@@ -132,10 +132,11 @@
           </select>
         </div>
         <div class="field">
-          <label for="plan" id="lbl-plan">Plan de repas</label>
+          <label for="plan" id="lbl-plan">Type de repas</label>
           <select id="plan">
-            <option value="single">Recette unique</option>
-            <option value="daily3">3 repas / jour</option>
+            <option value="breakfast">Petit déjeuner</option>
+            <option value="lunch">Déjeuner</option>
+            <option value="dinner">Dîner</option>
           </select>
         </div>
       </div>
@@ -145,7 +146,7 @@
       </div>
 
       <div class="field">
-        <a class="btn" id="open-digital-card" href="/card.html" target="_blank" rel="noopener">📇 <span id="btn-card-label">Ouvrir la carte digitale</span></a>
+        <a class="btn" id="open-digital-card" href="/card.html" target="_blank" rel="noopener">📇 <span id="btn-card-label">Ouvrir / Imprimer / Acheter</span></a>
         <div class="hint" id="hint-card">La carte s'ouvre dans un nouvel onglet.</div>
       </div>
     </aside>
@@ -154,7 +155,7 @@
     <section class="panel content">
       <div class="hero">
         <h3 id="hero-title">Assistant Chef‑AI</h3>
-        <p id="hero-desc">Générez des recettes et plans 3 repas adaptés à votre signe et votre objectif.</p>
+        <p id="hero-desc">Générez une recette par type de repas (petit‑déj, déjeuner, dîner) adaptée à votre signe et votre objectif.</p>
       </div>
 
       <div class="work">
@@ -219,9 +220,9 @@
 
     // i18n labels
     const I18N = {
-      fr: {controls:'Contrôles', lang:'Langue', hintLang:'Astuce : L pour basculer rapidement.', sign:'Votre signe', state:'Objectif / État', plan:'Plan de repas', generate:'Générer', card:'Ouvrir la carte digitale', hintCard:"La carte s'ouvre dans un nouvel onglet.", heroTitle:'Assistant Chef‑AI', heroDesc:'Générez des recettes et plans 3 repas adaptés à votre signe et votre objectif.', generating:'🍳 Génération…', error:'❌ Erreur de génération', previewHint:'Raccourcis : Ctrl+Entrée pour générer', coachTitle:'Coach‑AI', shopping:'Liste de courses', subs:'Substitutions', steps:'Étapes', start:'Démarrer', stop:'Arrêter', timer:'Minuteur' },
-      en: {controls:'Controls', lang:'Language', hintLang:'Tip: press L to switch quickly.', sign:'Your sign', state:'Goal / State', plan:'Meal plan', generate:'Generate', card:'Open digital card', hintCard:'The card opens in a new tab.', heroTitle:'Chef‑AI Assistant', heroDesc:'Generate recipes and 3‑meal plans tailored to your sign and goal.', generating:'🍳 Generating…', error:'❌ Generation error', previewHint:'Shortcuts: Ctrl+Enter to generate', coachTitle:'AI Coach', shopping:'Shopping list', subs:'Substitutions', steps:'Steps', start:'Start', stop:'Stop', timer:'Timer' },
-      ar: {controls:'التحكم', lang:'اللغة', hintLang:'نصيحة: اضغط L للتبديل بسرعة.', sign:'برجك', state:'الهدف / الحالة', plan:'خطة الوجبات', generate:'إنشاء', card:'فتح البطاقة الرقمية', hintCard:'تفتح البطاقة في علامة تبويب جديدة.', heroTitle:'مساعد الشيف‑AI', heroDesc:'أنشئ وصفات وخطط ٣ وجبات حسب برجك وهدفك.', generating:'🍳 جاري الإنشاء…', error:'❌ خطأ في الإنشاء', previewHint:'اختصار: Ctrl+Enter للإنشاء', coachTitle:'مدرّب الذكاء الاصطناعي', shopping:'قائمة التسوّق', subs:'البدائل', steps:'الخطوات', start:'ابدأ', stop:'أوقف', timer:'مؤقّت' }
+      fr: {controls:'Contrôles', lang:'Langue', hintLang:'Astuce : L pour basculer rapidement.', sign:'Votre signe', state:'Objectif / État', plan:'Type de repas', generate:'Générer', card:'Ouvrir / Imprimer / Acheter', hintCard:"La carte s'ouvre dans un nouvel onglet.", heroTitle:'Assistant Chef‑AI', heroDesc:'Générez une recette par type de repas (petit‑déj, déjeuner, dîner) adaptée à votre signe et votre objectif.', generating:'🍳 Génération…', error:'❌ Erreur de génération', previewHint:'Raccourcis : Ctrl+Entrée pour générer', coachTitle:'Coach‑AI', shopping:'Liste de courses', subs:'Substitutions', steps:'Étapes', start:'Démarrer', stop:'Arrêter', timer:'Minuteur' },
+      en: {controls:'Controls', lang:'Language', hintLang:'Tip: press L to switch quickly.', sign:'Your sign', state:'Goal / State', plan:'Meal type', generate:'Generate', card:'Open / Print / Buy', hintCard:'The card opens in a new tab.', heroTitle:'Chef‑AI Assistant', heroDesc:'Generate a recipe per meal type (breakfast, lunch, dinner) tailored to your sign and goal.', generating:'🍳 Generating…', error:'❌ Generation error', previewHint:'Shortcuts: Ctrl+Enter to generate', coachTitle:'AI Coach', shopping:'Shopping list', subs:'Substitutions', steps:'Steps', start:'Start', stop:'Stop', timer:'Timer' },
+      ar: {controls:'التحكم', lang:'اللغة', hintLang:'نصيحة: اضغط L للتبديل بسرعة.', sign:'برجك', state:'الهدف / الحالة', plan:'نوع الوجبة', generate:'إنشاء', card:'فتح / طباعة / شراء', hintCard:'تفتح البطاقة في علامة تبويب جديدة.', heroTitle:'مساعد الشيف‑AI', heroDesc:'أنشئ وصفة حسب نوع الوجبة (فطور، غداء، عشاء) مناسبة لبرجك وهدفك.', generating:'🍳 جاري الإنشاء…', error:'❌ خطأ في الإنشاء', previewHint:'اختصار: Ctrl+Enter للإنشاء', coachTitle:'مدرّب الذكاء الاصطناعي', shopping:'قائمة التسوّق', subs:'البدائل', steps:'الخطوات', start:'ابدأ', stop:'أوقف', timer:'مؤقّت' }
     };
 
     function applyI18N(code){
@@ -239,17 +240,13 @@
 
     async function generate(){
       if (busy) return; busy=true; const code=lang.value||'fr'; const t=I18N[code]||I18N.fr; out.textContent=t.generating;
-      const payload={ lang:code, sign:sign.value, state:state.value, plan:plan.value, mode:(plan.value==='daily3')?'mealplan':'recipe' };
+      const payload={ lang:code, sign:sign.value, state:state.value, meal:plan.value, mode:'recipe' };
       try{
         if (TEST_MODE){ out.innerHTML='<h4>Recette</h4><p>Shake détox citron‑gingembre‑menthe 🍋🌱</p>'; LAST_RECIPE={ title:'Recette démo', ingredients:[{item:'Eau',qty:250,unit:'ml'}], steps:[{n:1,text:'Mélanger.'}]}; renderCoach(); return; }
         let r; try{ r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});}catch(netErr){ LAST_ERROR=netErr; throw new Error('NETWORK_ERROR: '+netErr.message); }
         if(!r.ok){ const txt=await r.text().catch(()=> ''); LAST_ERROR={status:r.status, body:txt}; throw new Error('HTTP_'+r.status+' '+txt.slice(0,120)); }
         let data; try{ data=await r.json(); }catch(parseErr){ LAST_ERROR={parse:'JSON'}; throw new Error('INVALID_JSON'); }
-        if(payload.mode==='mealplan'){
-          const b=data?.breakfast||'—', l=data?.lunch||'—', d=data?.dinner||'—';
-          out.innerHTML=`<h4>Plan</h4><ul><li><strong>Breakfast / Petit‑déj:</strong> ${b}</li><li><strong>Lunch / Déjeuner:</strong> ${l}</li><li><strong>Dinner / Dîner:</strong> ${d}</li></ul>`;
-          LAST_RECIPE=null; renderCoach(true);
-        } else {
+        {
           const rec=data?.recipe||data; LAST_RECIPE=rec;
           const title = rec?.title||'Recette'; const bodyText = rec?.intro||rec?.description||'';
           out.innerHTML=`<h4>${title}</h4><p>${bodyText}</p>`; renderCoach();
@@ -264,7 +261,7 @@
     document.addEventListener('keydown', (e)=>{ if (e.ctrlKey && e.key==='Enter') generate(); if (!e.ctrlKey && (e.key==='l'||e.key==='L')){ const values=['fr','en','ar']; const i=values.indexOf(lang.value); lang.value=values[(i+1)%values.length]; lang.dispatchEvent(new Event('change')); } });
 
     // Card link with params
-    function cardURL(){ const params=new URLSearchParams({sign:sign.value,lang:lang.value,state:state.value,plan:plan.value}); const base=openCard.getAttribute('href')||'/card.html'; const url=new URL(base, window.location.origin); url.search=params.toString(); return url.toString(); }
+    function cardURL(){ const params=new URLSearchParams({sign:sign.value,lang:lang.value,state:state.value,meal:plan.value}); const base=openCard.getAttribute('href')||'/card.html'; const url=new URL(base, window.location.origin); url.search=params.toString(); return url.toString(); }
     openCard.addEventListener('click', ()=>{ openCard.setAttribute('href', cardURL()); $('#tab-card').click(); $('#preview').src = cardURL(); });
 
     // Copy & Ping
