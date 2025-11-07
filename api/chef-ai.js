@@ -1,19 +1,37 @@
 // api/chef-ai.js  (Production - clean)
 // If your runtime doesn't have global fetch, uncomment node-fetch import:
-console.log("🔑 KEY PRESENT ?", !!process.env.OPENAI_API_KEY);
 
-export default async function handler(req, res) {
+
+//export default async function handler(req, res) {
   // Basic CORS for same-origin deployments; tighten in production if needed
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+//  res.setHeader('Access-Control-Allow-Origin', '*');
+//  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+//  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (req.method === 'OPTIONS') return res.status(204).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+//  if (req.method === 'OPTIONS') return res.status(204).end();
+//  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
+//  try {
+//    const { prompt, sign, meal, lang } = req.body || {};
+//    if (!prompt) return res.status(400).json({ error: 'Missing prompt' });
+// api/openai-test.js
+export default async function handler(req, res) {
+  console.log("🔔 openai-test called");
+  console.log("🔑 KEY PRESENT ?", !!process.env.OPENAI_API_KEY, " (len:", (process.env.OPENAI_API_KEY||'').length, ")");
+  if (!process.env.OPENAI_API_KEY) {
+    return res.status(500).json({ ok:false, msg:"no_key" });
+  }
   try {
-    const { prompt, sign, meal, lang } = req.body || {};
-    if (!prompt) return res.status(400).json({ error: 'Missing prompt' });
+    const r = await fetch("https://api.openai.com/v1/models", {
+      headers: { "Authorization": `Bearer ${process.env.OPENAI_API_KEY}` }
+    });
+    const text = await r.text();
+    return res.status(200).json({ ok:true, status: r.status, body: text.slice(0,500) });
+  } catch (e) {
+    console.error("ERR CALL OPENAI", e);
+    return res.status(500).json({ ok:false, error: String(e) });
+  }
+}
 
     const system = `You are Chef-AI, an expert chef and nutritionist. Respond ONLY with valid JSON, nothing else.
 Return an object with exactly two keys:
