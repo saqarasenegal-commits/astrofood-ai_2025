@@ -206,30 +206,57 @@
   };
 
   // ---------- SAMPLE RECIPES (fallback local) ----------
-  const SAMPLE_RECIPES = {
-    fr: {
-      breakfast: [
-        { title:"Bowl énergie (africain)", desc:"Bouillie de fonio, banane, miel local, graines de sésame.",
-          ingredients:["Fonio 100g","1 banane","1 c.à soupe miel","1 c.à soupe graines de sésame"],
-          preparation:"Cuire le fonio 10 min. Mélanger avec la banane, le miel et les graines.",
-          cook:"Cuisson: 10 min", calories:"≈350 kcal", imgSeed:"fonio-bowl" }
-      ],
-      lunch: [
-        { title:"Yassa végétarien léger", desc:"Oignons caramélisés, citron, riz complet.",
-          ingredients:["Oignons 2","Citron","Riz complet 150g","Légumes grillés"],
-          preparation:"Caraméliser les oignons, ajouter citron, cuire riz, servir.",
-          cook:"Cuisson: 25-30 min", calories:"≈520 kcal", imgSeed:"yassa-veg" }
-      ],
-      dinner: [
-        { title:"Soupe douce de patate", desc:"Patate douce, gingembre, lait de coco.",
-          ingredients:["Patate douce 300g","1 c.à café gingembre","200ml lait de coco"],
-          preparation:"Cuire 20 min, mixer, servir chaud.",
-          cook:"Cuisson: 20 min", calories:"≈300 kcal", imgSeed:"sweetpotato-soup" }
-      ]
-    },
-    en: { /* similar */ breakfast: SAMPLE_RECIPES?.fr?.breakfast || [], lunch: SAMPLE_RECIPES?.fr?.lunch || [], dinner: SAMPLE_RECIPES?.fr?.dinner || [] },
-    ar: { breakfast: SAMPLE_RECIPES?.fr?.breakfast || [], lunch: SAMPLE_RECIPES?.fr?.lunch || [], dinner: SAMPLE_RECIPES?.fr?.dinner || [] }
-  };
+ // ---------- SAMPLE RECIPES (fix) ----------
+const SAMPLE_RECIPES = {
+  fr: {
+    breakfast: [
+      {
+        title: "Bowl énergie (africain)",
+        desc: "Bouillie de fonio, banane, miel local, graines de sésame.",
+        ingredients: ["Fonio 100g", "1 banane", "1 c.à soupe miel", "1 c.à soupe graines de sésame"],
+        preparation: "Cuire le fonio 10 min. Mélanger avec la banane, le miel et les graines.",
+        cook: "Cuisson: 10 min",
+        calories: "≈350 kcal",
+        imgSeed: "fonio-bowl"
+      }
+    ],
+    lunch: [
+      {
+        title: "Yassa végétarien léger",
+        desc: "Oignons caramélisés, citron, riz complet.",
+        ingredients: ["Oignons 2", "Citron", "Riz complet 150g", "Légumes grillés"],
+        preparation: "Caraméliser les oignons, ajouter citron, cuire riz, servir.",
+        cook: "Cuisson: 25-30 min",
+        calories: "≈520 kcal",
+        imgSeed: "yassa-veg"
+      }
+    ],
+    dinner: [
+      {
+        title: "Soupe douce de patate",
+        desc: "Patate douce, gingembre, lait de coco.",
+        ingredients: ["Patate douce 300g", "1 c.à café gingembre", "200ml lait de coco"],
+        preparation: "Cuire 20 min, mixer, servir chaud.",
+        cook: "Cuisson: 20 min",
+        calories: "≈300 kcal",
+        imgSeed: "sweetpotato-soup"
+      }
+    ]
+  }
+};
+
+// Maintenant, après avoir créé SAMPLE_RECIPES.fr, on affecte en et ar
+SAMPLE_RECIPES.en = {
+  breakfast: SAMPLE_RECIPES.fr.breakfast,
+  lunch: SAMPLE_RECIPES.fr.lunch,
+  dinner: SAMPLE_RECIPES.fr.dinner
+};
+
+SAMPLE_RECIPES.ar = {
+  breakfast: SAMPLE_RECIPES.fr.breakfast,
+  lunch: SAMPLE_RECIPES.fr.lunch,
+  dinner: SAMPLE_RECIPES.fr.dinner
+};
 
   // ---------- HELPERS & DOM ----------
   function elt(q){return document.querySelector(q)}
@@ -287,37 +314,79 @@
   }
 
   // render recipe UI + sync card
-  function renderRecipeToUI(recipe, uiLang='fr'){
-    const isAr = uiLang==='ar';
-    let html='';
-    if(isAr){
-      html+=`<div class="rtl" style="font-family:Cairo, sans-serif">`;
-      html+=`<div style="font-weight:700;font-size:15px;margin-bottom:8px">${escapeHtml(recipe.title)}</div>`;
-      html+=`<div style="font-size:14px;margin-bottom:8px">${escapeHtml(recipe.desc)}</div>`;
-      html+=`<div style="font-weight:600;margin-top:6px">المكونات:</div>`;
-      html+=`<ul style="padding-left:18px">`+recipe.ingredients.map(i=>`<li style="margin-bottom:6px">${escapeHtml(i)}</li>`).join('')+`</ul>`;
-      html+=`<div style="font-weight:600;margin-top:6px">طريقة التحضير:</div><div style="margin-top:6px">${escapeHtml(recipe.preparation)}</div>`;
-      html+=`<div style="margin-top:8px">${escapeHtml(recipe.cook)} · ${escapeHtml(recipe.calories)}</div>`;
-      html+=`</div>`;
-    } else {
-      html+=`<div>`;
-      html+=`<div style="font-weight:700;font-size:15px;margin-bottom:8px">${escapeHtml(recipe.title)}</div>`;
-      html+=`<div style="font-size:14px;margin-bottom:8px">${escapeHtml(recipe.desc)}</div>`;
-      html+=`<div style="font-weight:600;margin-top:6px">Ingrédients:</div>`;
-      html+=`<ul style="padding-left:18px">`+recipe.ingredients.map(i=>`<li style="margin-bottom:6px">${escapeHtml(i)}</li>`).join('')+`</ul>`;
-      html+=`<div style="font-weight:600;margin-top:6px">Préparation:</div><div style="margin-top:6px">${escapeHtml(recipe.preparation)}</div>`;
-      html+=`<div style="margin-top:8px">${escapeHtml(recipe.cook)} · ${escapeHtml(recipe.calories)}</div>`;
-      html+=`</div>`;
-    }
-    recipeOut.innerHTML = html;
-    cardImage.src = recipe.img || imageFor(recipe.title);
-    cardImage.alt = recipe.title;
-    cardTitle.textContent = recipe.title;
-    cardIngredients.innerHTML = `<strong>${uiLang==='ar'?'المكونات':'Ingrédients'}:</strong> ${escapeHtml((recipe.ingredients||[]).join(', '))}`;
-    cardPrep.innerHTML = `<strong>${uiLang==='ar'?'طريقة التحضير':'Préparation'}:</strong> ${escapeHtml(recipe.preparation)}`;
-    cardCook.textContent = recipe.cook || '--';
-    cardCals.textContent = recipe.calories || '--';
+ // Remplace entièrement ta fonction renderRecipeToUI par ceci
+function renderRecipeToUI(recipe, uiLang='fr'){
+  const isAr = uiLang === 'ar';
+
+  // card text labels selon langue
+  const labels = {
+    ingredients: isAr ? 'المكونات' : (uiLang === 'en' ? 'Ingredients' : 'Ingrédients'),
+    preparation: isAr ? 'طريقة التحضير' : (uiLang === 'en' ? 'Preparation' : 'Préparation'),
+    cook: isAr ? 'الطبخ' : (uiLang === 'en' ? 'Cook' : 'Cuisson'),
+    calories: isAr ? 'السعرات' : (uiLang === 'en' ? 'Calories' : 'Calories')
+  };
+
+  // build recipe HTML (main recipe output area)
+  let html = '';
+  if (isAr) {
+    html += `<div class="rtl" style="font-family:Cairo, sans-serif">`;
+    html += `<div style="font-weight:700;font-size:15px;margin-bottom:8px">${escapeHtml(recipe.title)}</div>`;
+    html += `<div style="font-size:14px;margin-bottom:8px">${escapeHtml(recipe.desc)}</div>`;
+    html += `<div style="font-weight:600;margin-top:6px">${labels.ingredients}:</div>`;
+    html += `<ul style="padding-right:18px; padding-left:0; text-align:right">` + (recipe.ingredients || []).map(i=>`<li style="margin-bottom:6px">${escapeHtml(i)}</li>`).join('') + `</ul>`;
+    html += `<div style="font-weight:600;margin-top:6px">${labels.preparation}:</div><div style="margin-top:6px">${escapeHtml(recipe.preparation)}</div>`;
+    html += `<div style="margin-top:8px">${escapeHtml(recipe.cook)} · ${escapeHtml(recipe.calories)}</div>`;
+    html += `</div>`;
+  } else {
+    html += `<div>`;
+    html += `<div style="font-weight:700;font-size:15px;margin-bottom:8px">${escapeHtml(recipe.title)}</div>`;
+    html += `<div style="font-size:14px;margin-bottom:8px">${escapeHtml(recipe.desc)}</div>`;
+    html += `<div style="font-weight:600;margin-top:6px">${labels.ingredients}:</div>`;
+    html += `<ul style="padding-left:18px">` + (recipe.ingredients || []).map(i=>`<li style="margin-bottom:6px">${escapeHtml(i)}</li>`).join('') + `</ul>`;
+    html += `<div style="font-weight:600;margin-top:6px">${labels.preparation}:</div><div style="margin-top:6px">${escapeHtml(recipe.preparation)}</div>`;
+    html += `<div style="margin-top:8px">${escapeHtml(recipe.cook)} · ${escapeHtml(recipe.calories)}</div>`;
+    html += `</div>`;
   }
+
+  recipeOut.innerHTML = html;
+
+  // update card preview (image + card content)
+  cardImage.src = recipe.img || imageFor(recipe.title);
+  cardImage.alt = recipe.title || '';
+
+  // When Arabic, set RTL styles on the card and align text right
+  const cardEl = document.getElementById('card-inner');
+  if (isAr) {
+    cardEl.style.direction = 'rtl';
+    cardEl.style.textAlign = 'right';
+    cardTitle.style.fontFamily = 'Cairo, sans-serif';
+  } else {
+    cardEl.style.direction = 'ltr';
+    cardEl.style.textAlign = 'left';
+    cardTitle.style.fontFamily = '';
+  }
+
+  // set title (recipe title may already be in Arabic from the model)
+  cardTitle.textContent = recipe.title || 'AstroFood · Carte digitale';
+
+  // Build ingredients line (short) and preparation snippet for card
+  const ingrShort = (recipe.ingredients || []).slice(0,6).join(', ');
+  cardIngredients.innerHTML = `<strong>${isAr ? 'المكونات' : (uiLang === 'en' ? 'Ingredients' : 'Ingrédients')}:</strong> ${escapeHtml(ingrShort)}`;
+  cardPrep.innerHTML = `<strong>${isAr ? 'طريقة التحضير' : (uiLang === 'en' ? 'Preparation' : 'Préparation')}:</strong> ${escapeHtml((recipe.preparation||'').slice(0,120))}`;
+  cardCook.textContent = recipe.cook || '--';
+  cardCals.textContent = recipe.calories || '--';
+
+  // small accessibility: set lang attribute on the card for screen readers
+  const cardWrapper = document.getElementById('card');
+  if (isAr) {
+    cardWrapper.setAttribute('lang','ar');
+  } else if (uiLang === 'en') {
+    cardWrapper.setAttribute('lang','en');
+  } else {
+    cardWrapper.setAttribute('lang','fr');
+  }
+}
+
 
   function escapeHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
 
