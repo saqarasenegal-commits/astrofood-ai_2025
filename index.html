@@ -38,7 +38,7 @@
   </style>
 
   <!-- html2canvas CDN -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 </head>
 <body>
   <div class="wrap" role="main">
@@ -111,7 +111,10 @@
           </div>
           <div id="chef-response" class="muted" style="margin-top:8px;min-height:46px">Réponse Chef-AI ici...</div>
         </div>
-
+          <input type="text" id="prompt" placeholder="Pose ta question au chef..." />
+          <button onclick="sendPrompt()">Envoyer</button>
+          <pre id="result"></pre>
+        
         <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
           <div style="flex:1">
             <label id="lbl-contact">QR / Contact</label>
@@ -179,7 +182,20 @@
     </footer>
   </div>
 
-  <script>
+
+<script>
+  async function sendPrompt() {
+    const prompt = document.getElementById('prompt').value;
+
+    const response = await fetch('/api/chef-ai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
+    });
+
+    const data = await response.json();
+    document.getElementById('result').innerText = data.result || data.error;
+  }  
   // ---------- UI TEXTS ----------
   const UI_TEXT = {
     fr:{ title:"AstroFood — Premium Gold (Chef-AI)", sub:"Recettes et cartes digitales — FR/EN/AR",
